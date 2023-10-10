@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { CitiesContext } from './CitiesContext';
+import { TContextValue } from '../../types';
 
-export function useCities () {
+export function useCities (): TContextValue {
 	const context = useContext(CitiesContext);
 
 	if(context === undefined)

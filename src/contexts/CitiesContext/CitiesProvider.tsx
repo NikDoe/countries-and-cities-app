@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { CitiesContext } from './CitiesContext';
-import { TContextValue } from '../../types';
+import { TCity, TContextValue } from '../../types';
 
 type CitiesProviderProps = {
     children: ReactNode;
@@ -11,11 +11,13 @@ const API_URL = 'http://localhost:9000';
 export function CitiesProvider({ children }: CitiesProviderProps) {
 	const [cities, setCities] = useState([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [currentCity, setCurrentCity] = useState<TCity | null>(null);
 
 	useEffect(function(){
-		async function fetchCities() {
+		async function fetchCities(): Promise<void> {
+			setIsLoading(true);
+
 			try {
-				setIsLoading(true);
 				const response = await fetch(`${API_URL}/cities`);
 				const data = await response.json();
 
@@ -30,9 +32,26 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 		fetchCities();
 	}, []);
 
+	async function getCity(cityId: number): Promise<void> {
+		setIsLoading(true);
+
+		try {
+			const response = await fetch(`${API_URL}/cities/${cityId}`);
+			const data = await response.json();
+
+			setCurrentCity(data);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
 	const contextValue: TContextValue = {
 		cities,
-		isLoading
+		isLoading,
+		currentCity,
+		getCity,
 	};
     
 	return (

@@ -21,4 +21,6 @@ export type TCountry = {
 export type TContextValue = {
 	cities: TCity[];
 	isLoading: boolean;
+	currentCity: TCity | null;
+	getCity: (id: number) => Promise<void>;
 }

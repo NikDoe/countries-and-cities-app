@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import styles from './Form.module.css';
 import Button from './Button';
+import BackButton from './BackButton';
 
 function Form() {
 	const [cityName, setCityName] = useState('');
@@ -10,16 +11,9 @@ function Form() {
 	const [date, setDate] = useState(new Date());
 	const [notes, setNotes] = useState('');
 
-	const navigate = useNavigate();
-
 	const handleAdd = (e: FormEvent) => {
 		e.preventDefault();
 		console.log('add');
-	};
-
-	const handleNavigateBack = (e: FormEvent) => {
-		e.preventDefault();
-		navigate(-1);
 	};
 
 	return (
@@ -59,12 +53,7 @@ function Form() {
 				>
 					Add
 				</Button>
-				<Button 
-					customType='back'
-					onClick={handleNavigateBack}
-				>
-					&larr; Back
-				</Button>
+				<BackButton />
 			</div>
 		</form>
 	);
