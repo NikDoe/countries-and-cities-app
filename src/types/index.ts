@@ -17,3 +17,8 @@ export type TCountry = {
 	country: string;
 	emoji: string;
 }
+
+export type TContextValue = {
+	cities: TCity[];
+	isLoading: boolean;
+}

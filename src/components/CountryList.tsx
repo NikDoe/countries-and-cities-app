@@ -1,19 +1,13 @@
+import { TCity, TCountry } from '../types';
+import { useCities } from '../contexts/CitiesContext';
+
 import Spinner from './Spinner';
 import styles from './CountryList.module.css';
 import CountryItem from './CountryItem';
 import Message from './Message';
-import { TCity, TCountry } from '../types';
 
-type CountryListProps = {
-	cities: TCity[];
-	isLoading: boolean;
-}
-
-function CountryList(props: CountryListProps) {
-	const {
-		cities,
-		isLoading
-	} = props;
+function CountryList() {
+	const { cities, isLoading } = useCities();
 
 	if (isLoading) return <Spinner />;
 
