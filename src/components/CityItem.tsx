@@ -2,29 +2,31 @@ import { Link } from 'react-router-dom';
 import { TCity } from '../types';
 
 import styles from './CityItem.module.css';
-
-const formatDate = (date: string) =>
-	new Intl.DateTimeFormat('en', {
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-	}).format(new Date(date));
+import { formatDate } from '../utils';
+import { useCities } from '../contexts/CitiesContext';
 
 type CityItemProps = {
     city: TCity;
 }
 
 function CityItem({ city }: CityItemProps) {
+	const { currentCity } = useCities();
 	const { cityName, emoji, date, id, position } = city;
 
 	function handleClick() {
 		console.log('delete city');
 	}
 
+	const activeCityClassName = id === currentCity?.id 
+		? styles['cityItem--active'] 
+		: '';
+
+	const classNameString = `${styles.cityItem} ${activeCityClassName}`;
+
 	return (
 		<li>
 			<Link
-				className={styles.cityItem}
+				className={classNameString}
 				to={`${id}?lat=${position.lat}&lng=${position.lng}`}
 			>
 				<span className={styles.emoji}>{emoji}</span>
