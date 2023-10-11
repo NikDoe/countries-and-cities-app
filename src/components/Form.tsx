@@ -25,10 +25,7 @@ function Form() {
 	const handleAdd = (e: FormEvent) => {
 		e.preventDefault();
 		console.log('add');
-	};
-
-	console.log(cityName);
-	
+	};	
 
 	useEffect(function () {
 		async function fetchCityData () {
