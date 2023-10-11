@@ -1,22 +1,19 @@
 import { useEffect, useState } from 'react';
 import { LatLngTuple } from 'leaflet';
-import { useSearchParams } from 'react-router-dom';
 import { useGeolocation } from '../hooks/useGeolocation';
 
 import MapContent from './MapContent';
 import Button from './Button';
 
 import styles from './Map.module.css';
+import { useUrlPosition } from '../hooks/useUrlPosition';
 
 const CENTER_MAP_POSITION: LatLngTuple  = [51.505, -0.09];
 
 function Map() {
 	const [mapPosition, setMapPosition] = useState<LatLngTuple | null>(null);
-	const [searchParams] = useSearchParams();
 	const { coordinates, getCurrentPostion } = useGeolocation();
-
-	const mapLat = searchParams.get('lat');
-	const mapLng = searchParams.get('lng');
+	const [mapLat, mapLng] = useUrlPosition();
 
 	useEffect(function() {
 		if(mapLat && mapLng) {

@@ -24,3 +24,10 @@ export type TContextValue = {
 	currentCity: TCity | null;
 	getCity: (id: number) => Promise<void>;
 }
+
+export type TCityData = {
+	city: string;
+	countryCode: string;
+	countryName: string;
+	locality: string;
+}
