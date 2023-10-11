@@ -1,36 +1,57 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { LatLngTuple } from 'leaflet';
+
+import Message from './Message';
+import MapContent from './MapContent';
+
 import styles from './Map.module.css';
-import Button from './Button';
+
+
+const CENTER_MAP_POSITION: LatLngTuple  = [51.505, -0.09];
 
 function Map() {
-	const [searchParams, setSearchParams] = useSearchParams();
-	const navigate = useNavigate();
+	const [mapPosition, setMapPosition] = useState<LatLngTuple | null>(null);
+	const [loading, setLoading] = useState(true);
 
-	const lat = searchParams.get('lat');
-	const lng = searchParams.get('lng');
+	useEffect(() => {
+		async function fetchData () {
+			try {
+				if ('geolocation' in navigator) {
+					const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+						navigator.geolocation.getCurrentPosition(
+							(position) => {
+								resolve(position);
+							},
+							(error) => {
+								reject(error);
+							}
+						);
+					});
+					const latitude = position.coords.latitude;
+					const longitude = position.coords.longitude;
+					const latLng: LatLngTuple = [latitude, longitude];
+					setMapPosition(latLng);
+				} else {
+					throw new Error('Геолокация не поддерживается в этом браузере.');
+				}
+			} catch (error) {
+				if(error instanceof Error) {
+					console.error(`Ошибка геолокации: ${error.message}`);
+				}
+			} finally {
+				setLoading(false);
+			}
+		}
 
-	const handleChangePosition = () => {
-		const newParams = { lat: '42.3601', lng: '-71.0589' };
-		setSearchParams(newParams);
-	};
+		fetchData();
+	}, []);
 
-	const handleClickOnMap = () => {
-		navigate('form');
-	};
+	const mapLoading = <Message message='Получение координат...' />;
 
 	return (
-		<div className={styles.mapContainer}
-			onClick={handleClickOnMap}
-		>
-			<h1>Map</h1>
-			<h2>
-				Position : {lat}/{lng}
-			</h2>
-			<Button
-				onClick={handleChangePosition}
-			>
-				change position
-			</Button>
+		<div className={styles.mapContainer}>
+			{loading && mapLoading}
+			{!loading && <MapContent center={mapPosition || CENTER_MAP_POSITION} />}
 		</div>
 	);
 }
