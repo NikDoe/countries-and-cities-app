@@ -5,6 +5,7 @@ import Message from './Message';
 import MapContent from './MapContent';
 
 import styles from './Map.module.css';
+import { useSearchParams } from 'react-router-dom';
 
 
 const CENTER_MAP_POSITION: LatLngTuple  = [51.505, -0.09];
@@ -12,6 +13,10 @@ const CENTER_MAP_POSITION: LatLngTuple  = [51.505, -0.09];
 function Map() {
 	const [mapPosition, setMapPosition] = useState<LatLngTuple | null>(null);
 	const [loading, setLoading] = useState(true);
+
+	const [searchParams] = useSearchParams();
+	const mapLat = searchParams.get('lat');
+	const mapLng = searchParams.get('lng');
 
 	useEffect(() => {
 		async function fetchData () {
@@ -45,6 +50,12 @@ function Map() {
 
 		fetchData();
 	}, []);
+
+	useEffect(function() {
+		if(mapLat && mapLng) {
+			setMapPosition([Number(mapLat), Number(mapLng)]);
+		}
+	}, [mapLat, mapLng]);
 
 	const mapLoading = <Message message='Получение координат...' />;
 
