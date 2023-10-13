@@ -23,6 +23,7 @@ export type TContextValue = {
 	isLoading: boolean;
 	currentCity: TCity | null;
 	getCity: (id: number) => Promise<void>;
+	createCity: (newCity: TCity) => Promise<void>;
 }
 
 export type TCityData = {

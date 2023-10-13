@@ -1,7 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { TCityData } from '../types';
+import { TCity, TCityData } from '../types';
 import { convertToEmoji } from '../utils';
 import { useUrlPosition } from '../hooks/useUrlPosition';
+import { useCities } from '../contexts/CitiesContext';
+import { useNavigate } from 'react-router-dom';
+
+import DatePicker from 'react-datepicker';
 
 import Button from './Button';
 import BackButton from './BackButton';
@@ -9,23 +13,54 @@ import Message from './Message';
 import Spinner from './Spinner';
 
 import styles from './Form.module.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const API_CITY_DATA_URL = 'https://api.bigdatacloud.net/data/reverse-geocode-client';
 
 function Form() {
 	const [cityName, setCityName] = useState('');
 	const [country, setCountry] = useState('');
-	const [date, setDate] = useState(() => new Date());
+	const [date, setDate] = useState<Date | null>(new Date());
 	const [notes, setNotes] = useState('');
 	const [emoji, setEmoji] = useState('');
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
 	const [geolocationError, setGeolocationError] = useState<null | string>(null);
 	const [lat, lng] = useUrlPosition();
+	const { createCity, isLoading } = useCities();
+	const navigate = useNavigate();
 
-	const handleAdd = (e: FormEvent) => {
+	async function handleAdd (e: FormEvent) {
 		e.preventDefault();
-		console.log('add');
-	};	
+
+		if(!cityName || !date) return;
+
+		const originalDate  = new Date(date);
+		const year = originalDate.getFullYear();
+		const month = String(originalDate.getMonth() + 1).padStart(2, '0');
+		const day = String(originalDate.getDate()).padStart(2, '0');
+		const hours = String(originalDate.getHours()).padStart(2, '0');
+		const minutes = String(originalDate.getMinutes()).padStart(2, '0');
+		const seconds = String(originalDate.getSeconds()).padStart(2, '0');
+		const milliseconds = originalDate.getMilliseconds();
+
+		const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+		const newCity: TCity = {
+			cityName,
+			country,
+			emoji,
+			date: formattedDate,
+			notes,
+			position: { 
+				lat: Number(lat), 
+				lng: Number(lng) 
+			},
+			id: Date.now(),
+		};
+
+		await createCity(newCity);
+		navigate('/app');
+	}	
 
 	useEffect(function () {
 		if(!lat && !lng) return;
@@ -60,7 +95,7 @@ function Form() {
 		fetchCityData();
 	}, [lat, lng]);
 
-	if(loadingForm) {
+	if(loadingForm || isLoading) {
 		return <Spinner />;
 	}
 
@@ -88,10 +123,10 @@ function Form() {
 
 			<div className={styles.row}>
 				<label htmlFor='date'>When did you go to {cityName}?</label>
-				<input
+				<DatePicker
 					id='date'
-					onChange={(e) => setDate(e.target.value)}
-					value={date}
+					onChange={date => setDate(date)} 
+					selected={date}
 				/>
 			</div>
 

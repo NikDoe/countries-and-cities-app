@@ -9,7 +9,7 @@ type CitiesProviderProps = {
 const API_URL = 'http://localhost:9000';
 
 export function CitiesProvider({ children }: CitiesProviderProps) {
-	const [cities, setCities] = useState([]);
+	const [cities, setCities] = useState<TCity[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [currentCity, setCurrentCity] = useState<TCity | null>(null);
 
@@ -47,11 +47,35 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 		}
 	}
 
+	async function createCity(newCity:TCity): Promise<void> {
+		setIsLoading(true);
+
+		try {
+			const response =  await fetch(
+				`${API_URL}/cities`, 
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(newCity),
+				}
+			);
+			const data = await response.json();
+			setCities(citiesArray => [...citiesArray, data]);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
 	const contextValue: TContextValue = {
 		cities,
 		isLoading,
 		currentCity,
 		getCity,
+		createCity,
 	};
     
 	return (
