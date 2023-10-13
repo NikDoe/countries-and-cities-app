@@ -28,6 +28,8 @@ function Form() {
 	};	
 
 	useEffect(function () {
+		if(!lat && !lng) return;
+
 		async function fetchCityData () {
 			setGeolocationError(null);
 			setLoadingForm(true);
@@ -60,6 +62,10 @@ function Form() {
 
 	if(loadingForm) {
 		return <Spinner />;
+	}
+
+	if(!lat && !lng) {
+		return <Message message='Start clicking somewhere on the map' />;
 	}
 
 	if(geolocationError) {
