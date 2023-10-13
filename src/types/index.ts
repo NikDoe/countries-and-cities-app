@@ -24,6 +24,7 @@ export type TContextValue = {
 	currentCity: TCity | null;
 	getCity: (id: number) => Promise<void>;
 	createCity: (newCity: TCity) => Promise<void>;
+	deleteCity: (id: number) => Promise<void>;
 }
 
 export type TCityData = {

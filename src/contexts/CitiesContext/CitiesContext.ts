@@ -7,6 +7,7 @@ const defaultContextValue: TContextValue  = {
 	currentCity: null,
 	getCity: async () => {},
 	createCity: async () => {},
+	deleteCity: async () => {},
 };
 
 export const CitiesContext = createContext(defaultContextValue);

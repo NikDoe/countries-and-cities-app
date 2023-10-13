@@ -1,9 +1,10 @@
+import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { TCity } from '../types';
-
-import styles from './CityItem.module.css';
 import { formatDate } from '../utils';
 import { useCities } from '../contexts/CitiesContext';
+
+import styles from './CityItem.module.css';
 
 type CityItemProps = {
     city: TCity;
@@ -12,9 +13,11 @@ type CityItemProps = {
 function CityItem({ city }: CityItemProps) {
 	const { currentCity } = useCities();
 	const { cityName, emoji, date, id, position } = city;
+	const { deleteCity } = useCities();
 
-	function handleClick() {
-		console.log('delete city');
+	function handleClick(e: MouseEvent) {
+		e.preventDefault();
+		deleteCity(id);
 	}
 
 	const activeCityClassName = id === currentCity?.id 

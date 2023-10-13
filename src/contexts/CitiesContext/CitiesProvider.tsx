@@ -23,7 +23,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 
 				setCities(data);
 			} catch (error) {
-				console.log(error);
+				console.log('There was an error loading ALL cities💀');
 			} finally {
 				setIsLoading(false);
 			}
@@ -41,7 +41,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 
 			setCurrentCity(data);
 		} catch (error) {
-			console.log(error);
+			console.log('There was an error loading city💀');
 		} finally {
 			setIsLoading(false);
 		}
@@ -64,7 +64,23 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 			const data = await response.json();
 			setCities(citiesArray => [...citiesArray, data]);
 		} catch (error) {
-			console.log(error);
+			console.log('There was an error creating city💀');
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function deleteCity (id: number) {
+		setIsLoading(true);
+
+		try {
+			await fetch(`${API_URL}/cities/${id}`, {
+				method: 'DELETE'
+			});
+			
+			setCities(cities => cities.filter(city => city.id !== id));
+		} catch (error) {
+			console.log('There was an error deleting city💀');
 		} finally {
 			setIsLoading(false);
 		}
@@ -76,6 +92,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 		currentCity,
 		getCity,
 		createCity,
+		deleteCity,
 	};
     
 	return (
