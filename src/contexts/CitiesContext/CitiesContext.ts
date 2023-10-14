@@ -5,6 +5,7 @@ const defaultContextValue: TContextValue  = {
 	cities: [],
 	isLoading: false,
 	currentCity: null,
+	error: '',
 	getCity: async () => {},
 	createCity: async () => {},
 	deleteCity: async () => {},

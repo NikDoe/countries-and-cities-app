@@ -1,6 +1,6 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useReducer } from 'react';
 import { CitiesContext } from './CitiesContext';
-import { TCity, TContextValue } from '../../types';
+import { ActionType, TAction, TCitiesState, TCity, TContextValue } from '../../types';
 
 type CitiesProviderProps = {
     children: ReactNode;
@@ -8,24 +8,77 @@ type CitiesProviderProps = {
 
 const API_URL = 'http://localhost:9000';
 
+const initialState: TCitiesState = {
+	cities: [],
+	isLoading: false,
+	currentCity: null,
+	error: ''
+};
+
+function reducer (state: TCitiesState, action: TAction): TCitiesState {
+	switch (action.type) {
+		case ActionType.LOADING:
+			return {
+				...state,
+				isLoading: true,
+			};
+		case ActionType.FETCH_CITIES:
+			return {
+				...state,
+				isLoading: false,
+				cities: action.payload
+			};
+		case ActionType.GET_CITY:
+			return {
+				...state,
+				isLoading: false,
+				currentCity: action.payload
+			};
+		case ActionType.CREATE_CITY:
+			return {
+				...state,
+				isLoading: false,
+				currentCity: action.payload,
+				cities: [...state.cities, action.payload]
+			};
+		case ActionType.DELETE_CITY:
+			return {
+				...state,
+				isLoading: false,
+				currentCity: null,
+				cities: state.cities.filter(
+					city => city.id !== action.payload
+				)
+			};
+		case ActionType.REJECTED:
+			return {
+				...state,
+				isLoading: false,
+				error: action.payload
+			};
+		default:
+			return state;
+	}
+}
+
 export function CitiesProvider({ children }: CitiesProviderProps) {
-	const [cities, setCities] = useState<TCity[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [currentCity, setCurrentCity] = useState<TCity | null>(null);
+	const [state, dispatch] = useReducer(reducer, initialState);
+	const { cities, currentCity, isLoading, error } = state;
 
 	useEffect(function(){
 		async function fetchCities(): Promise<void> {
-			setIsLoading(true);
+			dispatch({ type: ActionType.LOADING });
 
 			try {
 				const response = await fetch(`${API_URL}/cities`);
 				const data = await response.json();
 
-				setCities(data);
+				dispatch({ type: ActionType.FETCH_CITIES, payload: data });
 			} catch (error) {
-				console.log('There was an error loading ALL cities💀');
-			} finally {
-				setIsLoading(false);
+				dispatch({ 
+					type: ActionType.REJECTED, 
+					payload: 'There was an error loading ALL cities💀' 
+				});
 			}
 		}
 
@@ -33,22 +86,23 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 	}, []);
 
 	async function getCity(cityId: number): Promise<void> {
-		setIsLoading(true);
+		dispatch({ type: ActionType.LOADING });
 
 		try {
 			const response = await fetch(`${API_URL}/cities/${cityId}`);
 			const data = await response.json();
 
-			setCurrentCity(data);
+			dispatch({ type: ActionType.GET_CITY, payload: data });
 		} catch (error) {
-			console.log('There was an error loading city💀');
-		} finally {
-			setIsLoading(false);
+			dispatch({ 
+				type: ActionType.REJECTED, 
+				payload: 'There was an error loading city💀'
+			});
 		}
 	}
 
 	async function createCity(newCity:TCity): Promise<void> {
-		setIsLoading(true);
+		dispatch({ type: ActionType.LOADING });
 
 		try {
 			const response =  await fetch(
@@ -62,27 +116,30 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 				}
 			);
 			const data = await response.json();
-			setCities(citiesArray => [...citiesArray, data]);
+
+			dispatch({ type: ActionType.CREATE_CITY, payload: data });
 		} catch (error) {
-			console.log('There was an error creating city💀');
-		} finally {
-			setIsLoading(false);
+			dispatch({ 
+				type: ActionType.REJECTED, 
+				payload: 'There was an error creating city💀'
+			});
 		}
 	}
 
 	async function deleteCity (id: number) {
-		setIsLoading(true);
+		dispatch({ type: ActionType.LOADING });
 
 		try {
 			await fetch(`${API_URL}/cities/${id}`, {
 				method: 'DELETE'
 			});
 			
-			setCities(cities => cities.filter(city => city.id !== id));
+			dispatch({ type: ActionType.DELETE_CITY, payload: id });
 		} catch (error) {
-			console.log('There was an error deleting city💀');
-		} finally {
-			setIsLoading(false);
+			dispatch({ 
+				type: ActionType.REJECTED, 
+				payload: 'There was an error deleting city💀'
+			});
 		}
 	}
 
@@ -90,6 +147,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 		cities,
 		isLoading,
 		currentCity,
+		error,
 		getCity,
 		createCity,
 		deleteCity,
