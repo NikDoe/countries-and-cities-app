@@ -3,12 +3,7 @@ import { TAuthContextValue, TAuthState } from '../../types';
 
 export const authInitialState: TAuthState = {
 	isAuthenticated: false,
-	user: {
-		email: '',
-		password: '',
-		avatar: '',
-		name: '',
-	}
+	user: null,
 };
 
 const defaultContextValue: TAuthContextValue  = {
