@@ -54,3 +54,29 @@ export type TCityData = {
 	countryName: string;
 	locality: string;
 }
+
+export type TUser = {
+	name: string;
+	avatar: string;
+	email: string;
+	password: string;
+}
+
+export type TAuthState = {
+	user: TUser | null;
+	isAuthenticated: boolean;
+}
+
+export enum AuthActionType  {
+	LOGIN = 'login',
+	LOGOUT = 'logout'
+}
+
+export type TAuthAction = 
+{ type: AuthActionType.LOGIN; payload: TUser } |
+{ type: AuthActionType.LOGOUT; }
+
+export interface TAuthContextValue extends TAuthState {
+	login: (email: string, password: string) => void;
+	logout: () => void;
+}

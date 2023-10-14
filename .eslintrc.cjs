@@ -18,6 +18,7 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
     'semi': ['error', 'always'],
     'quotes': ['error', 'single'],
-    'jsx-quotes': ['error', 'prefer-single']
+    'jsx-quotes': ['error', 'prefer-single'],
+    "max-len": ["error", { "code": 80, "ignoreComments": true }]
   },
 }
