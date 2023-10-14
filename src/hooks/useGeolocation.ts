@@ -34,7 +34,10 @@ export const useGeolocation = function () {
 				setIsLoading(false);
 			},
 			(error) => {
-				setErrorMessage(errorMessages[error.code] || 'Произошла неизвестная ошибка');
+				setErrorMessage(
+					errorMessages[error.code] || 
+					'Произошла неизвестная ошибка'
+				);
 				setIsLoading(false);
 			}
 		);

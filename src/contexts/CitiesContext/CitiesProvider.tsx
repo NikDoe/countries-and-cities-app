@@ -1,6 +1,12 @@
 import { ReactNode, useEffect, useReducer } from 'react';
 import { CitiesContext } from './CitiesContext';
-import { ActionType, TAction, TCitiesState, TCity, TContextValue } from '../../types';
+import { 
+	ActionType, 
+	TAction, 
+	TCitiesState, 
+	TCity, 
+	TContextValue 
+} from '../../types';
 
 type CitiesProviderProps = {
     children: ReactNode;

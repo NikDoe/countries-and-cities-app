@@ -12,7 +12,12 @@ type MapContentProps = {
 
 function MapContent({ center }: MapContentProps) {
 	return (
-		<MapContainer className={styles.map} center={center} zoom={13} scrollWheelZoom={true}>
+		<MapContainer 
+			className={styles.map} 
+			center={center} 
+			zoom={13} 
+			scrollWheelZoom={true}
+		>
 			<ChangeCenter position={center} />
 			<DetectMapClick />
 			<TileLayer

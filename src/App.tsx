@@ -22,7 +22,10 @@ function App() {
 					<Route path='product' element={<Product />}/>
 					<Route path='login' element={<Login />}/>
 					<Route path='app' element={<AppLayout />}>
-						<Route index element={<Navigate to='cities' replace={true} />} />
+						<Route index element={
+							<Navigate to='cities' 
+								replace={true} />
+						} />
 						<Route path='cities' element={<CityList />} 
 						/>
 						<Route path='cities/:id' element={<City />} />

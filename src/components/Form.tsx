@@ -24,10 +24,15 @@ function Form() {
 	const [notes, setNotes] = useState('');
 	const [emoji, setEmoji] = useState('');
 	const [loadingForm, setLoadingForm] = useState<boolean>(false);
-	const [geolocationError, setGeolocationError] = useState<null | string>(null);
 	const [lat, lng] = useUrlPosition();
+	const [
+		geolocationError, 
+		setGeolocationError
+	] = useState<null | string>(null);
+
 	const { createCity, isLoading } = useCities();
 	const navigate = useNavigate();
+
 
 	async function handleAdd (e: FormEvent) {
 		e.preventDefault();
@@ -35,15 +40,15 @@ function Form() {
 		if(!cityName || !date) return;
 
 		const originalDate  = new Date(date);
-		const year = originalDate.getFullYear();
-		const month = String(originalDate.getMonth() + 1).padStart(2, '0');
-		const day = String(originalDate.getDate()).padStart(2, '0');
-		const hours = String(originalDate.getHours()).padStart(2, '0');
-		const minutes = String(originalDate.getMinutes()).padStart(2, '0');
-		const seconds = String(originalDate.getSeconds()).padStart(2, '0');
-		const milliseconds = originalDate.getMilliseconds();
+		const y = originalDate.getFullYear();
+		const m = String(originalDate.getMonth() + 1).padStart(2, '0');
+		const d = String(originalDate.getDate()).padStart(2, '0');
+		const h = String(originalDate.getHours()).padStart(2, '0');
+		const min = String(originalDate.getMinutes()).padStart(2, '0');
+		const s = String(originalDate.getSeconds()).padStart(2, '0');
+		const mls = originalDate.getMilliseconds();
 
-		const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+		const formattedDate = `${y}-${m}-${d}T${h}:${min}:${s}.${mls}Z`;
 
 		const newCity: TCity = {
 			cityName,
@@ -69,7 +74,9 @@ function Form() {
 			setGeolocationError(null);
 			setLoadingForm(true);
 			try {
-				const response = await fetch(`${API_CITY_DATA_URL}?latitude=${lat}&longitude=${lng}`);
+				const response = await fetch(
+					`${API_CITY_DATA_URL}?latitude=${lat}&longitude=${lng}`
+				);
 				const data: TCityData = await response.json();
 
 				const { city, countryCode, countryName, locality } = data;

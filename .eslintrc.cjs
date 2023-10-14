@@ -19,6 +19,11 @@ module.exports = {
     'semi': ['error', 'always'],
     'quotes': ['error', 'single'],
     'jsx-quotes': ['error', 'prefer-single'],
-    "max-len": ["error", { "code": 80, "ignoreComments": true }]
+    "max-len": ["error", { 
+      "code": 80, 
+      "ignoreComments": true,
+      "ignoreUrls": true,
+      "tabWidth": 2
+    }]
   },
 }
